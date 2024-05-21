@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Welcome, {{ current_user.username }}!</h1>
+
+    <h1>Image Steganography</h1>
+
+    <h2>Hide Image</h2>
+    <form action="/hide" method="post" enctype="multipart/form-data">
+        <input type="file" name="secret_image" accept="image/*" required>
+        <input type="file" name="cover_image" accept="image/*" required>
+        <button type="submit">Hide</button>
+    </form>
+
+    <h2>Reveal Image</h2>
+    <form action="/reveal" method="post" enctype="multipart/form-data">
+        <input type="file" name="output_image" accept="image/*" required>
+        <button type="submit">Reveal</button>
+    </form>
+
+    <h2>Download Output Image</h2>
+    <a href="/download_output">Download Output Image</a>
+
+    <h2>Download Revealed Image</h2>
+    <a href="/download_revealed">Download Revealed Image</a>
+
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+    <!-- Add image hiding form here -->
+</body>
+</html>

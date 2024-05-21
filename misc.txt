@@ -1,0 +1,34 @@
+function sendImagesToBackend() {
+            // Function to send cover and secret image to the flask backend using js
+            const secretImage = document.getElementById('secret-image').files[0];
+            const coverImage = document.getElementById('cover-image').files[0];
+
+            // Create a FormData object to store the images
+            const formData = new FormData();
+            formData.append('secret_image', secretImage);
+            formData.append('cover_image', coverImage);
+
+            // Define the backend route
+            const url = '/hide';
+
+            // Using Fetch API
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Redirect to the homepage after successful upload
+                window.location.href = '/';
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
+        }
+
+
+
+  <form action="/hide" method="post" enctype="multipart/form-data">

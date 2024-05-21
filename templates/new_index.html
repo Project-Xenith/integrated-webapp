@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Steganography</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .navbar {
+            background-color: black;
+            padding: 20px 0; /* Increased padding top and bottom */
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .logo img {
+            max-height: 40px;
+            margin-right: 10px;
+        }
+
+        .container {
+            margin: 120px auto; /* Increased margin top */
+            max-width: 600px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-container {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #output {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .download-btn {
+            background-color: #3498db;
+            margin-top: 10px;
+            display: block;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="company-logo.png" alt="Company Logo">
+        </div>
+        <div>
+            <a href="/">Home</a>
+            <a href="#" id="about">About</a>
+            <a href="#">Contact</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+    <div class="container">
+           <label for="container">Hiding Secret Image</label>
+            <div class="upload-container">
+                <label for="cover-image">Upload Cover Image:</label>
+                <input type="file" id="cover-image" accept="image/*">
+            </div>
+            <div class="upload-container">
+                <label for="secret-image">Upload Secret Image:</label>
+                <input type="file" id="secret-image" accept="image/*">
+            </div>
+            <button type="submit" id="upload-btn" >Upload Images</button>
+            <div id="output" style="display: none;"></div>
+            <button id="download-btn" class="download-btn" style="display: none;" onclick="window.location.href = '/download_output';">Download Cover Image</button>
+    </div>
+
+    <div class="container" id="extract-container">
+        <label for="container">Extracting Secret Image</label>
+        <div class="upload-container">
+            <label for="hidden-image">Upload Cover Image:</label>
+            <input type="file" id="hidden-image" accept="image/*">
+        </div>
+        <button id="upload-btn2">Upload Hidden Images</button>
+        <div id="hidden-output" style="display: none;"></div>
+        <button id="download-btn2" class="download-btn" style="display: none;" onclick="window.location.href = '/download_revealed';">Download Hidden Image</button>
+    </div>
+
+    <script>
+
+         document.getElementById('about').addEventListener('click', function() {
+            // this is the function for the About button present on the navigation bar
+             const container = document.querySelector('.container');
+                container.innerHTML = `
+                    <div class="about-content">
+                        <h2>About Image Steganography</h2>
+                        <p>
+                            In this project, our primary objective is to perform image steganography through the integration of neural networks. Image steganography, the art of concealing information within images, traditionally employs methods such as LSB (Least Significant Bit) and PVD (Pixel Value Differencing). However, by harnessing the capabilities of neural networks, we introduce a new paradigm that not only automates the steganographic process but also enhances the overall robustness of the project.
+                        </p>
+                        <p>
+                            Our neural network-based approach enables sophisticated techniques for hiding information within images. The project places a particular emphasis on the LSB method, a classic steganographic technique. The integration of neural networks not only streamlines the steganographic process but also facilitates steganalysis, allowing for the detection and extraction of concealed information.
+                        </p>
+                        <p>
+                            The dataset employed in this project is a vast repository comprising 44,000 high-resolution images, each boasting dimensions of 512x512 pixels. These images serve as carriers for various malicious payloads, including JavaScript, HTML, PowerShell, URLs, and Ethereum addresses. Leveraging the LSB technique, these payloads are strategically embedded into the images, precisely in the first bit of each color channel. This innovative approach maximizes the potential payload size to an impressive 512x512x3 bits.
+                        </p>
+                        <p>
+                            What sets this project apart is its comprehensive nature. By combining advanced steganographic techniques with the computational prowess of neural networks, we not only offer a robust solution for hiding information within images but also empower the project with steganalysis capabilities. This dual functionality positions our project at the forefront of image steganography research, paving the way for advancements in both information concealment and detection within the visual medium.
+                        </p>
+                    </div>
+                `;
+        });
+
+
+
+        document.getElementById('upload-btn').addEventListener('click', function() {
+            event.preventDefault();
+            const coverImage = document.getElementById('cover-image').files[0];
+            const secretImage = document.getElementById('secret-image').files[0];
+
+            if (coverImage) {
+                const reader = new FileReader();
+                reader.readAsDataURL(coverImage);
+                reader.onload = function(e) {
+                    const coverSrc = e.target.result;
+                    const outputDiv = document.getElementById('output');
+                    outputDiv.innerHTML = `<img src="${coverSrc}" alt="Cover Image">`;
+                    outputDiv.style.display = 'block';
+                    document.getElementById('download-btn').style.display = 'block';
+                };
+            } else {
+                alert('Please select a cover image.');
+            }
+        });
+
+
+        document.getElementById('upload-btn').addEventListener('click', function() {
+            // Prevent the default form submission behavior
+            event.preventDefault();
+
+            // Function to send cover and secret image to the flask backend using js
+            const secretImage = document.getElementById('secret-image').files[0];
+            const coverImage = document.getElementById('cover-image').files[0];
+
+            // Create a FormData object to store the images
+            const formData = new FormData();
+            formData.append('secret_image', secretImage);
+            formData.append('cover_image', coverImage);
+
+            // Define the backend route
+            const url = '/hide';
+
+            // Using Fetch API
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Redirect to the homepage after successful upload
+                //
+                // the next line has been commented by me
+                // window.location.href = '/';
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        });
+
+        document.getElementById('upload-btn2').addEventListener('click', function() {
+            const hiddenImage = document.getElementById('hidden-image').files[0];
+
+            if (hiddenImage) {
+                const reader = new FileReader();
+                reader.readAsDataURL(hiddenImage);
+                reader.onload = function(e) {
+                    const hiddenSrc = e.target.result;
+                    const hiddenOutputDiv = document.getElementById('hidden-output');
+                    hiddenOutputDiv.innerHTML = `<img src="${hiddenSrc}" alt="Hidden Image">`;
+                    hiddenOutputDiv.style.display = 'block';
+                    document.getElementById('download-btn2').style.display = 'block';
+                };
+            } else {
+                alert('Please select a hidden image.');
+            }
+        });
+
+        document.getElementById('upload-btn2').addEventListener('click', function() {
+            // Prevent the default form submission behavior
+            event.preventDefault();
+            console.log("Sending the processed image");
+            // Function to send cover and secret image to the flask backend using js
+            const hiddenImage = document.getElementById('hidden-image').files[0];
+
+            // Create a FormData object to store the images
+            const formData = new FormData();
+            formData.append('output_image', hiddenImage);
+
+            // Define the backend route
+            const url = '/reveal';
+
+            // Using Fetch API
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Redirect to the homepage after successful upload
+                //
+                // the next line has been commented by me
+                // window.location.href = '/';
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        });
+    </script>
+</body>
+</html>
